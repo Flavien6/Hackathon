@@ -17,7 +17,7 @@
                                 <th>Delete</th>
                             </thead>
                             <tbody>        
-                                <tr>
+                                <tr v-for="(value, id) in values" :key="id">
                                     <td><input type="checkbox" class="checkthis" /></td>
                                     <td>Mohsin</td>
                                     <td>Irshad</td>
@@ -93,7 +93,26 @@
 </template>
 
 <script>
+    import axios from 'axios'
+    import Localisation from './Localisation'
+
     export default {
-        name: 'VisuTable'
+        name: 'VisuTable',
+        data() {
+            return {
+                values: []
+            }
+        },
+
+        mounted(){            
+            axios
+                .get('url')
+                .then(response => {
+                    this.values = response.data
+                })
+                .catch(function (error) {
+                    console.log(error)
+                })
+        }
     }
 </script>
