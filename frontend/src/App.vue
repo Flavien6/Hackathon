@@ -24,7 +24,8 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: #42b983;
+  //background-color: #42b983;
+  background-color: #efefef;
   height: 100vh;
 }
 </style>

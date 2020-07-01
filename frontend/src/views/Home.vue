@@ -1,16 +1,11 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <img alt="The logo" src="@/assets/MakeLogoGreatAgain.png">
     <!--<HelloWorld msg="C'est ma bite"/>-->
   </div>
 </template>
 
 <style lang="scss">
-  .home {
-    img {
-      transform: rotate(60deg) translateY(80px);
-    }
-  }
 </style>
 
 <script>

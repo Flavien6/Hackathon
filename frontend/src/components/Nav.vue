@@ -1,23 +1,27 @@
 <template>
-    <div id="nav">
-      <nav class="navbar navbar-dark bg-light fixed-top">
-        <NavLink  url="/" name="Super ce logo" class="navbar-brand" />
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <ul class="navbar-nav">
+  <div id="nav">
+      <div id="mySidenav" class="sidenav">
+        <!--<a href="javascript:void(0)" class="closebtn" @click="closeNav">&times;</a>-->
+        <ul>
             <li class="nav-item" v-for="(item, id) in linkItems" :key="id">
-              <NavLink  :url="item.url" :name="item.name" />
+                <NavLink  :url="item.url" :name="item.name" />
             </li>
-          </ul>
-        </div>
-      </nav>
+        </ul>
+      </div>
+      
+      <div id="burger">
+         <tasty-burger-button
+         type="arrow"
+         color="#42b983"
+         activeColor="#42b983"
+         @toggle="toggleNav" />
+      </div>
     </div>
 </template>
 
 <script>
     import NavLink from './NavLink'
+    import { TastyBurgerButton }  from 'vue-tasty-burgers'
 
     export default {
         name: 'Nav',
@@ -35,53 +39,132 @@
                         name: "Visualiser",
                         url: "/visualiser"
                     }
-                ]
+                ],
+                isActive: false,
+
             }
         },
         methods: {
+            /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
+            /*nom: () => {
 
+            }
+
+            nom: function() {
+              
+            }
+
+            nom() {
+
+            }*/
+
+            /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
+            openNav() {
+                //console.log(this)
+                this.$el.querySelector("#mySidenav").style.width = "250px";
+                this.$el.querySelector("#burger").style.left = "250px"
+            },
+            closeNav() {
+                this.$el.querySelector("#mySidenav").style.width = "0px";
+                this.$el.querySelector("#burger").style.left = "0"
+            },
+            toggleNav() {
+                if(this.isActive) this.closeNav()
+                else this.openNav()
+                this.isActive = !this.isActive
+            },
         },
         computed: {
 
         },
         mounted() {
-
+                        
         },
         components: {
-            NavLink
+            NavLink,
+            'tasty-burger-button': TastyBurgerButton
         }
     }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
 #nav {
-  .navbar {
-    background-color: #2c3e50 !important;
+   #burger {
+      transition: 0.5s;
+      position: fixed; 
+      z-index: 1; 
+      top: 15px;
+      padding: 20px;
+      left: 0;
+      background-color: #2c3e50 !important;
+      color: #42b983;
+      border-radius: 0 8px 8px 0;
+      * {
+         vertical-align: middle;
+      }
+   }
 
-    button:focus {
-      outline: none;
-    }
+   .sidenav {
+      background-color: #2c3e50 !important;
+      height: 100%; 
+      background-color: #111; 
+      overflow-x: hidden; 
+      position: fixed; 
+      z-index: 1; 
+      top: 0; 
+      left: 0;
+      width: 0;
+      transition: 0.5s;
+      background-color: #2c3e50;
 
-    a {
+      .closebtn {
+      float: right;
+      padding-top: 2%;
+      padding-right: 8%;
+
+      &:hover {
+         color: #42b942;
+      }
+      }
+
+      ul {
+      padding-top: 60px;
+      }
+
+      li {
       font-weight: bold;
-
-      &:hover, &:focus{
-          color: inherit;
-          text-decoration: none;
-          transition: all 0.3s;
+      text-decoration: none;
+      padding-right: 20%;
+      font-size: 25px;
+      color: #42b983;
+      display: block;
+      transition: 0.5s;
       }
 
-      &.router-link-exact-active{
-        color: #42b983 !important;
-      }
+      a {
+         font-weight: bold;
+         text-decoration: none;
+         font-size: 25px;
+         color: #efefef;
+         display: block;
+         transition: 0.5s;
 
-      &.nav-link:hover {
-        color: #42b983;
-      }
-    }
-  }
+         &:hover, &:focus{
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s;
+         }
 
-  margin-bottom: 56px;
+         &.router-link-exact-active{
+         color: #42b983 !important;
+         }
+
+         &.nav-link:hover {
+         color: #42b983;
+         }
+      }
+   }
 }
 </style>

@@ -62,16 +62,20 @@
                 //console.log(data)
                 ctx.putImageData(newImage, canvas.width/2-img.width/2, 0);
 
-                ctx.font = "30px Arial";
+                /*ctx.font = "30px Arial";
                 ctx.textAlign = "center";
                 ctx.fillStyle = "#fff";
                 ctx.fillText("2 heures cette merde à faire", canvas.width/2, canvas.height/2);
                 ctx.fillText("KESKIA", canvas.width/2, canvas.height/2+30);
                 ctx.fillText("En full pixel processing", canvas.width/2, canvas.height/2+60);
-                ctx.fillText("Il est 6h35 !", canvas.width/2, canvas.height/2+90);
+                ctx.fillText("Il est 6h35 !", canvas.width/2, canvas.height/2+90);*/
             };
 
             img.src = srcImage.src;
+
+            /*window.$(this.$el).find('canvas').on('click', () => {
+                console.log("c'est ma bite")
+            })*/
         }
     }
 </script>

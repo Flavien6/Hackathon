@@ -4,7 +4,6 @@ var db = require('../services/database').sql;
 var queue = require('../services/queue');
 
 var table = 'Clients';
-var debug = require('debug')(table);
 
 // Define schema
 var schemaObject = {
@@ -19,27 +18,6 @@ var schemaObject = {
         type: db._sequelize.INTEGER
     }
     // ++++++++++++++ Modify to your own schema ++++++++++++++++++
-};
-
-
-schemaObject.owner = {
-    type: db._sequelize.STRING
-};
-
-schemaObject.createdBy = {
-    type: db._sequelize.STRING
-};
-
-schemaObject.client = {
-    type: db._sequelize.STRING
-};
-
-schemaObject.developer = {
-    type: db._sequelize.STRING
-};
-
-schemaObject.tags = {
-    type: db._sequelize.STRING
 };
 
 schemaObject._id = {
@@ -96,4 +74,3 @@ Clients.sync();
 Clients.transaction = db.transaction;
 
 module.exports = Clients;
-// ToDo: Test transactions
