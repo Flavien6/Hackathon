@@ -1,6 +1,9 @@
 const http = require('http')
 const express = require('express')
 const app = express()
+const routes = require('./routes')
+const bodyParser = require('body-parser')
+const cors = require('cors');
 
 const normalizePort = val => {
     const port = parseInt(val, 10);
@@ -48,17 +51,26 @@ server.on('listening', () => {
 
 server.listen(port);
 
-app.use((req, req, next) => {
-      res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-  next();
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    next();
 })
 
-app.use('/', function (req, res) {
+app.use(routes)
+
+//Affichage des erreurs
+app.use((err, req, res, next) => {
+    res.status(err.statusCode).json({ error: err });
+})
+
+/*app.use('/', function (req, res, next) {
     res.send('Hello World!')
-})
-
-app.listen(3000, function () {
-    console.log('Example app listening on port 3000!')
-})
+    next()
+})*/

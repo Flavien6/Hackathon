@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class CLIENT extends Model {
     static associate(models) {
@@ -38,6 +37,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'CLIENT',
-  });
-  return CLIENT;
-};
+    onDelete: 'cascade'
+  })
+
+  return CLIENT
+}

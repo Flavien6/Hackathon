@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class EMPLOI_HISTORIQUE extends Model {
     static associate(models) {
@@ -27,13 +26,16 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
     }
-  };
+  }
+
   EMPLOI_HISTORIQUE.init({
     date_debut: DataTypes.DATE,
     date_fin: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'EMPLOI_HISTORIQUE',
-  });
-  return EMPLOI_HISTORIQUE;
-};
+    onDelete: 'cascade'
+  })
+
+  return EMPLOI_HISTORIQUE
+}

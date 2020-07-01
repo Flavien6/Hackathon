@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class EMPLOYE extends Model {
     static associate(models) {
@@ -24,7 +23,8 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
     }
-  };
+  }
+
   EMPLOYE.init({
     id: {
       allowNull: false,
@@ -54,6 +54,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'EMPLOYE',
-  });
-  return EMPLOYE;
-};
+    onDelete: 'cascade'
+  })
+
+  return EMPLOYE
+}

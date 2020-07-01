@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class COMMANDE extends Model {
     static associate(models) {
@@ -11,14 +10,15 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false
         }
       })
-      models.COMMANDE.belongsTo(models.EMPLOyield, {
+      models.COMMANDE.belongsTo(models.EMPLOYE, {
         foreignKey: {
           name: 'vendeur_id',
           allowNull: false
         }
       })
     }
-  };
+  }
+
   COMMANDE.init({
     id: {
       allowNull: false,
@@ -45,6 +45,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'COMMANDE',
-  });
-  return COMMANDE;
-};
+    onDelete: 'cascade'
+  })
+
+  return COMMANDE
+}

@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class DEPARTEMENT extends Model {
     static associate(models) {
@@ -12,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
     }
-  };
+  }
+
   DEPARTEMENT.init({
     id: {
       allowNull: false,
@@ -31,6 +31,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'DEPARTEMENT',
-  });
-  return DEPARTEMENT;
-};
+    onDelete: 'cascade'
+  })
+
+  return DEPARTEMENT
+}

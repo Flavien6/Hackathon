@@ -1,7 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class REGION extends Model {
     static associate(models) {
@@ -12,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
         }
       })
     }
-  };
+  }
+
   REGION.init({
     id: {
       allowNull: false,
@@ -27,6 +27,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'REGION',
-  });
-  return REGION;
-};
+    onDelete: 'cascade'
+  })
+
+  return REGION
+}

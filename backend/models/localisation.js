@@ -1,13 +1,18 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
+
 module.exports = (sequelize, DataTypes) => {
   class LOCALISATION extends Model {
     static associate(models) {
-      // define association here
+      models.LOCALISATION.belongsTo(models.REGION, {
+        foreignKey: {
+          name: 'region_id',
+          allowNull: false
+        }
+      })
     }
-  };
+  }
+
   LOCALISATION.init({
     id: {
       allowNull: false,
@@ -23,11 +28,12 @@ module.exports = (sequelize, DataTypes) => {
     ville: {
       allowNull: false,
       type: DataTypes.STRING
-    },
-    region_id: DataTypes.INTEGER
+    }
   }, {
     sequelize,
     modelName: 'LOCALISATION',
-  });
-  return LOCALISATION;
-};
+    onDelete: 'cascade'
+  })
+
+  return LOCALISATION
+}
