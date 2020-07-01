@@ -29,50 +29,9 @@
 
     export default {
         name: "Visualisation",
-        props: {
-            id: Number,
-            name: String
-        },
         data() {
             return {
-                onglets: [
-                    {
-                        name: "Localisation",
-                        component: {
-                            Localisation
-                        }
-                    },
-                    {
-                        name: "Département",
-                        component: {
-                            Departement
-                        }
-                    },
-                    {
-                        name: "Employé",
-                        component: {
-                            Employe
-                        }
-                    },
-                    {
-                        name: "Client",
-                        component: {
-                            Client
-                        }
-                    },
-                    {
-                        name: "Produit",
-                        component: {
-                            Produit
-                        }
-                    },
-                    {
-                        name: "Commande",
-                        component: {
-                            Commande
-                        }
-                    }
-                ]
+            
             };
         },
         components: {
