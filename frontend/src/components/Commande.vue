@@ -4,9 +4,11 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="mytable" class="table table-bordred table-striped">                    
-                            <thead>                    
-                                <th><input type="checkbox" id="checkall" /></th>
+                        <table id="mytable" class="table table-bordred table-striped">
+                            <thead>
+                                <th>
+                                    <input type="checkbox" id="checkall" />
+                                </th>
                                 <th>Date</th>
                                 <th>Mode</th>
                                 <th>Client</th>
@@ -14,32 +16,30 @@
                                 <th>Total commande</th>
                                 <th>Vendeur</th>
                             </thead>
-                            <tbody>        
+                            <tbody>
                                 <tr v-for="(value, id) in values" :key="id">
-                                    <td><input type="checkbox" class="checkthis" /></td>
-                                    <td>{{ values.commande_date }}</td>
-                                    <td>{{ values.commande_mode }}</td>
-                                    <td>{{ values.client }}</td>
-                                    <td>{{ values.commande_etat }}</td>
-                                    <td>{{ values.commande_total }}</td>
-                                    <td>{{ values.vendeur }}</td>
-                                    <td><p data-placement="top" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-                                    <td><p data-placement="top" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
+                                    <td>
+                                        <input type="checkbox" class="checkthis" />
+                                    </td>
+                                    <td>{{ value.commande_date }}</td>
+                                    <td>{{ value.commande_mode }}</td>
+                                    <td>{{ value.client }}</td>
+                                    <td>{{ value.commande_etat }}</td>
+                                    <td>{{ value.commande_total }}</td>
+                                    <td>{{ value.vendeur }}</td>
+                                    <td></td>
                                 </tr>
-                            </tbody>      
+                            </tbody>
                         </table>
-                    </div>                                
+                    </div>
                 </div>
             </div>
         </div>
-
-        <Modal/>
     </div>
 </template>
 
 <script>
     import axios from 'axios'
-    import Modal from './modal'
 
     export default {
         name: "Commande",
@@ -50,7 +50,7 @@
             }
         },
         components: {
-            Modal
+            
         },
         mounted(){            
             axios

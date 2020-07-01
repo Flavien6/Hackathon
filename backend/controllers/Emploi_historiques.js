@@ -1,395 +1,107 @@
 "use strict";
+var EmploiHistoriques = require("../models").EMPLOI_HISTORIQUE;
+var service = "EmploiHistoriques";
+var EmploiHistoriquesController = {};
 
-var Emploi_historiques = require('../models').Emploi_historiques;
-var debug = require('debug')('emploi historiquesController');
+EmploiHistoriquesController.find = function (req, res, next) {
+    var query = {};
+    query.where = {};
 
-var service = 'Emploi_historiques';
-
-var Emploi_historiquesController = {};
-
-
-Emploi_historiquesController.find = function (req, res, next) {
-    var query;
-
-    if (req.query.search) {
-        query = req.query.search;
-        // Clean appId and userId
-        if (query && query.appId) {
-            delete query.appId;
-        }
-        if (query && query.accountId) {
-            delete query.accountId;
-        }
-
-        Emploi_historiques.search(query)
-            .then(function (resp) {
-                res.ok(JSON.parse(JSON.stringify(resp)));
-            })
-            .catch(function (err) {
-                next(err);
-            });
-    } else {
-        query = req.query;
-        // Clean appId and userId
-        if (query && query.appId) {
-            delete query.appId;
-        }
-        if (query && query.accountId) {
-            delete query.accountId;
-        }
-        var _query = {};
-        var projection = query.select; // Projection should be comma separated. eg. name,location
-        var ourProjection;
-
-        if (projection) {
-            ourProjection = Emploi_historiquesController.buildProjection(projection);
-            delete query.select;
-        }
-        var limit = query.limit * 1;
-        if (limit) {
-            delete query.limit;
-        }
-
-        var from = query.from;
-        var to = query.to;
-        if (from) {
-            query.createdAt = {};
-            query.createdAt.$gte = from;
-            delete query.from;
-            if (to) {
-                delete query.to;
-            } else {
-                to = new Date().toISOString();
-            }
-            query.createdAt.$lte = to;
-        } else {
-            query.createdAt = {};
-            query.createdAt.$gte = new Date('1989-03-15T00:00:00').toISOString();
-            if (to) {
-                delete query.to;
-            } else {
-                to = new Date().toISOString();
-            }
-            query.createdAt.$lte = to;
-        }
-        var lastId = query.lastId * 1;
-        if (lastId) {
-            if (query.desc) {
-                query._id = {};
-                query._id.$lt = lastId;
-                delete query.desc;
-            } else {
-                query._id = {};
-                query._id.$gt = lastId;
-            }
-            delete query.lastId;
-        }
-        if (query.desc) {
-            delete query.desc;
-        }
-        var sort = query.sort; // -fieldName: means descending while fieldName without the minus mean ascending bith by fieldName. eg, '-fieldName1 fieldName2'
-        if (sort) {
-            delete query.sort;
-        }
-        var populate = query.populate; // Samples: 'name location' will populate name and location references. only supports this for now | 'name', 'firstname' will populate name reference and only pick the firstname attribute
-        if (populate) {
-            delete query.populate;
-        }
-        var totalResultQ;
-        var totalQ;
-        var questionQ;
-
-        if (limit) {
-            _query.limit = limit;
-        } else {
-            limit = 50;
-            _query.limit = limit;
-        }
-        _query.where = query;
-        var totalResult = Emploi_historiques.count(_query);
-        var total = Emploi_historiques.count({});
-
-        if (sort) {
-            _query.order = [];
-            var splitSort = sort.split(' ');
-            for (var n in splitSort) {
-                if (typeof splitSort[n] === 'string') {
-                    if (splitSort[n][0] === '-') {
-                        _query.order.push([splitSort[n].substr('1'), 'DESC']);
-                    } else {
-                        _query.order.push([splitSort[n], 'ASC']);
-                    }
-                }
-            }
-        }
-
-        if (populate) {
-            _query.include = [];
-            var splitPopulation = populate.split(' ');
-            for (var m in splitPopulation) {
-                if (typeof splitPopulation[m] === 'string') {
-                    if (models[splitPopulation[m]]) {
-                        _query.include.push({ model: models[splitPopulation[m]] });
-                    }
-                }
-            }
-        }
-
-        if (projection) {
-            q.all([ourProjection, total, totalResult])
-                .spread(function (resp, total, totalResult) {
-                    resp._id = 1;
-                    _query.attributes = _.keys(resp);
-                    return [Emploi_historiques.findAll(_query), total, totalResult];
-                })
-                .spread(function (resp, total, totalResult) {
-                    var ourLastId;
-                    if (resp.length === 0) {
-                        ourLastId = null;
-                    } else {
-                        ourLastId = resp[resp.length - 1]._id;
-                    }
-
-                    var extraData = {};
-                    extraData.limit = limit * 1;
-                    extraData.total = total;
-                    extraData.totalResult = totalResult;
-                    extraData.lastId = ourLastId;
-                    extraData.isLastPage = (totalResult < limit) ? true : false;
-                    res.ok(JSON.parse(JSON.stringify(resp)), false, extraData);
-                })
-                .catch(function (err) {
-                    next(err);
-                });
-        } else {
-            q.all([Emploi_historiques.findAll(_query), total, totalResult])
-                .spread(function (resp, total, totalResult) {
-                    var ourLastId;
-                    if (resp.length === 0) {
-                        ourLastId = null;
-                    } else {
-                        ourLastId = resp[resp.length - 1]._id;
-                    }
-
-
-                    var extraData = {};
-                    extraData.limit = limit * 1;
-                    extraData.total = total;
-                    extraData.lastId = ourLastId;
-                    extraData.totalResult = totalResult;
-                    extraData.isLastPage = (totalResult < limit) ? true : false;
-                    res.ok(JSON.parse(JSON.stringify(resp)), false, extraData);
-                })
-                .catch(function (err) {
-                    next(err);
-                });
-        }
-
+    if (req.query.employe_id != undefined) {
+        query.where.employe_id = req.query.employe_id;
     }
+
+    if (req.query.emploi_id != undefined) {
+        query.where.emploi_id = req.query.emploi_id;
+    }
+
+    if (req.query.departement_id != undefined) {
+        query.where.departement_id = req.query.departement_id;
+    }
+
+    EmploiHistoriques.findAll(query)
+        .then(function (resp) {
+            //console.log(resp)
+            if (!resp) {
+                next({ statusCode: 404, message: "Could not find data" });
+            } else res.status(200).json(resp);
+        })
+        .catch(function (err) {
+            next({ ...err, statusCode: 500, message: "Unknown Error !" });
+        });
 };
 
-Emploi_historiquesController.findOne = function (req, res, next) {
-    var _query = {};
-    var id = req.params.id;
-    var query = req.query;
-    var populate;
-    if (query) {
-        populate = query.populate; // Samples: 'name location' will populate name and location references. only supports this for now | 'name', 'firstname' will populate name reference and only pick the firstname attribute
-    }
-    _query.where = Emploi_historiques.where = { _id: id };
-
-    if (populate) {
-        delete query.populate;
-        _query.include = [];
-        var splitPopulation = populate.split(' ');
-        for (var m in splitPopulation) {
-            if (typeof splitPopulation[m] === 'string') {
-                if (models[splitPopulation[m]]) {
-                    _query.include.push({ model: models[splitPopulation[m]] });
-                }
-            }
-        }
-    }
-
-    var question = Emploi_historiques.findOne(_query);
+EmploiHistoriquesController.create = function (req, res, next) {
+    var data = req.body;
+    let question = EmploiHistoriques.create(data);
 
     question
         .then(function (resp) {
             if (!resp) {
-                next();
-            } else {
-                res.ok(resp.toJSON());
-            }
+                next({ statusCode: 500, message: "Server Error !" });
+            } else res.status(200).json(resp);
         })
         .catch(function (err) {
-            next(err);
+            next({ ...err, statusCode: 500, message: "Unknown Error !" });
         });
 };
 
-Emploi_historiquesController.create = function (req, res, next) {
-    var data = req.body;
-    if (data && data.secure) {
-        delete data.secure;
-    }
-
-    var question;
-    if (data.length) {
-        question = Emploi_historiques.bulkCreate(data);
-    } else {
-        question = Emploi_historiques.create(data);
-    }
-
-    question
-        .then(function (resp) {
-            res.ok(resp);
-        })
-        .catch(function (err) {
-            next(err);
-        });
-};
-
-Emploi_historiquesController.update = function (req, res, next) {
-    var query = req.query;
-    var _query = {};
-    // Clean appId and userId
-    if (query && query.appId) {
-        delete query.appId;
-    }
-    if (query && query.accountId) {
-        delete query.accountId;
-    }
-    var data = req.body;
-    if (data && data.secure) {
-        delete data.secure;
-    }
-
-    _query.where = query;
-    Emploi_historiques.update(data, _query)
-        .then(function (resp) {
-            res.ok(resp);
-        })
-        .catch(function (err) {
-            next(err);
-        });
-};
-
-Emploi_historiquesController.updateOne = function (req, res, next) {
-    var _query = {};
+EmploiHistoriquesController.updateOne = function (req, res, next) {
     var id = req.params.id;
     var data = req.body;
-    if (data && data.secure) {
-        delete data.secure;
+
+    var _query = {};
+    _query.where = {};
+
+    if (req.query.employe_id != undefined) {
+        _query.where.employe_id = req.query.employe_id;
     }
-    _query.where = Emploi_historiques.where = { _id: id };
-    Emploi_historiques.update(data, _query)
+
+    if (req.query.emploi_id != undefined) {
+        _query.where.emploi_id = req.query.emploi_id;
+    }
+
+    if (req.query.departement_id != undefined) {
+        _query.where.departement_id = req.query.departement_id;
+    }
+
+    EmploiHistoriques.update(data, _query)
         .then(function (resp) {
-            if (!resp) {
-                next();
-            } else {
-                res.ok(resp);
-            }
+            if (!resp || resp == 0) {
+                next({ statusCode: 404, message: "No data Found !" });
+            } else res.status(200).json({ statusCode: 200, message: "OK !" });
         })
         .catch(function (err) {
-            next(err);
+            next({ ...err, statusCode: 500, message: "Unknown Error !" });
         });
 };
 
-Emploi_historiquesController.delete = function (req, res, next) {
+EmploiHistoriquesController.deleteOne = function (req, res, next) {
     var _query = {};
-    var query = req.query;
-    // Clean appId and userId
-    if (query && query.appId) {
-        delete query.appId;
-    }
-    if (query && query.accountId) {
-        delete query.accountId;
+    _query.where = {};
+
+    if (req.query.employe_id != undefined) {
+        _query.where.employe_id = req.query.employe_id;
     }
 
-    _query.where = query;
+    if (req.query.emploi_id != undefined) {
+        _query.where.emploi_id = req.query.emploi_id;
+    }
+
+    if (req.query.departement_id != undefined) {
+        _query.where.departement_id = req.query.departement_id;
+    }
 
     // Find match
-    Emploi_historiques.findAll(_query)
+    EmploiHistoriques.destroy(_query)
         .then(function (resp) {
-            var num = resp.length;
-            var last = num - 1;
-            for (var n in resp) {
-                if (typeof resp === 'object') {
-                    // Backup data in Trash
-                    var backupData = {};
-                    backupData.service = service;
-                    backupData.data = resp[n];
-                    backupData.owner = req.accountId;
-                    backupData.deletedBy = req.accountId;
-                    backupData.client = req.appId;
-                    backupData.developer = req.developer;
-
-                    resp[n].destroy();
-                    if (n * 1 === last) {
-                        return resp;
-                    }
-                } else {
-                    if (n * 1 === last) {
-                        return resp;
-                    }
-                }
-            }
-        })
-        .then(function (resp) {
-            res.ok(resp);
+            if (!resp || resp == 0) {
+                next({ statusCode: 404, message: "No data Found !" });
+            } else res.status(200).json({ statusCode: 200, message: "OK !" });
         })
         .catch(function (err) {
-            next(err);
+            next({ ...err, statusCode: 500, message: "Unknown Error !" });
         });
 };
 
-Emploi_historiquesController.deleteOne = function (req, res, next) {
-    var _query = {};
-    var id = req.params.id;
-
-    _query.where = { _id: id };
-    // Find match
-    Emploi_historiques.findOne(_query)
-        .then(function (resp) {
-            if (!resp) {
-                throw { statusCode: 404, message: 'Could not find data' };
-            }
-            // Backup data in Trash
-            var backupData = {};
-            backupData.service = service;
-            backupData.data = resp;
-            backupData.owner = req.accountId;
-            backupData.deletedBy = req.accountId;
-            backupData.client = req.appId;
-            backupData.developer = req.developer;
-
-            return resp.destroy();
-        })
-        .then(function (resp) {
-            res.ok(resp);
-        })
-        .catch(function (err) {
-            next(err);
-        });
-};
-
-Emploi_historiquesController.restore = function (req, res, next) {
-    var id = req.params.id;
-    // Find data by ID from trash 
-    Trash.findById(id)
-        .then(function (resp) {
-            // Restore to DB
-            return Emploi_historiques.create(resp.data);
-        })
-        .then(function (resp) {
-            // Delete from trash
-            return [Trash.findByIdAndRemove(id), resp];
-        })
-        .spread(function (trash, resp) {
-            res.ok(resp);
-        })
-        .catch(function (err) {
-            next(err);
-        });
-};
-
-module.exports = Emploi_historiquesController;
+module.exports = EmploiHistoriquesController;

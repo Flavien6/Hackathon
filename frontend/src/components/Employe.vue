@@ -4,9 +4,11 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
-                        <table id="mytable" class="table table-bordred table-striped">                    
-                            <thead>                    
-                                <th><input type="checkbox" id="checkall" /></th>
+                        <table id="mytable" class="table table-bordred table-striped">
+                            <thead>
+                                <th>
+                                    <input type="checkbox" id="checkall" />
+                                </th>
                                 <th>Prenom</th>
                                 <th>Nom</th>
                                 <th>Email</th>
@@ -18,36 +20,33 @@
                                 <th>Manager</th>
                                 <th>Departement</th>
                             </thead>
-                            <tbody>        
+                            <tbody>
                                 <tr v-for="(value, id) in values" :key="id">
-                                    <td><input type="checkbox" class="checkthis" /></td>
-                                    <td>{{ values.prenom }}</td>
-                                    <td>{{ values.nom }}</td>
-                                    <td>{{ values.email }}</td>
-                                    <td>{{ values.telephone }}</td>
-                                    <td>{{ values.date_embauche }}</td>
-                                    <td>{{ values.emploi }}</td>
-                                    <td>{{ values.salaire }}</td>
-                                    <td>{{ values.taux_commission }}</td>
-                                    <td>{{ values.manager }}</td>
-                                    <td>{{ values.departement }}</td>
-                                    <td><p data-placement="top" data-toggle="tooltip" title="Edit"><button class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#edit" ><span class="glyphicon glyphicon-pencil"></span></button></p></td>
-                                    <td><p data-placement="top" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#delete" ><span class="glyphicon glyphicon-trash"></span></button></p></td>
+                                    <td>
+                                        <input type="checkbox" class="checkthis" />
+                                    </td>
+                                    <td>{{ value.prenom }}</td>
+                                    <td>{{ value.nom }}</td>
+                                    <td>{{ value.email }}</td>
+                                    <td>{{ value.telephone }}</td>
+                                    <td>{{ value.date_embauche }}</td>
+                                    <td>{{ value.emploi }}</td>
+                                    <td>{{ value.salaire }}</td>
+                                    <td>{{ value.taux_commission }}</td>
+                                    <td>{{ value.manager }}</td>
+                                    <td>{{ value.departement }}</td>
                                 </tr>
-                            </tbody>      
+                            </tbody>
                         </table>
-                    </div>                                
+                    </div>
                 </div>
             </div>
         </div>
-
-        <Modal/>
     </div>
 </template>
 
 <script>
     import axios from 'axios'
-    import Modal from './modal'
 
     export default {
         name: "Employe",
@@ -58,7 +57,7 @@
             }
         },
         components: {
-            Modal
+            
         },
         mounted(){            
             axios

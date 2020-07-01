@@ -1,8 +1,8 @@
 <template>
-  <div class="home">
-    <img alt="The logo" src="@/assets/MakeLogoGreatAgain.png">
-    <!--<HelloWorld msg="C'est ma bite"/>-->
-  </div>
+    <div class="home">
+        <!--<img alt="The logo" src="@/assets/MakeLogoGreatAgain.png">
+        <HelloWorld msg="C'est ma bite"/>-->
+    </div>
 </template>
 
 <style lang="scss">

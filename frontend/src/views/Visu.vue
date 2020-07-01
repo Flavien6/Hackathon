@@ -1,12 +1,12 @@
 <template>
-  <div class="visu">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <div>
-      <Visualisation/>      
-      
-      <router-link to="/visualiser/edit">Editer</router-link>
+    <div class="visu">
+        <!--<img alt="Vue logo" src="../assets/logo.png" />-->
+        <div>
+            <Visualisation />
+
+            <router-link to="/visualiser/edit">Editer</router-link>
+        </div>
     </div>
-  </div>
 </template>
 
 <style lang="scss"></style>

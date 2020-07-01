@@ -1,12 +1,12 @@
 "use strict";
-var Employes = require("../models").EMPLOYE;
-var service = "Employes";
-var EmployesController = {};
+var Departements = require("../models").DEPARTEMENT;
+var service = "Departements";
+var DepartementsController = {};
 
-EmployesController.find = function (req, res, next) {
+DepartementsController.find = function (req, res, next) {
     console.log(req.query);
 
-    Employes.findAll()
+    Departements.findAll()
         .then(function (resp) {
             //console.log(resp)
             if (!resp) {
@@ -18,8 +18,8 @@ EmployesController.find = function (req, res, next) {
         });
 };
 
-EmployesController.findOne = function (req, res, next) {
-    var question = Employes.findByPk(req.params.id);
+DepartementsController.findOne = function (req, res, next) {
+    var question = Departements.findByPk(req.params.id);
 
     question
         .then(function (resp) {
@@ -32,9 +32,9 @@ EmployesController.findOne = function (req, res, next) {
         });
 };
 
-EmployesController.create = function (req, res, next) {
+DepartementsController.create = function (req, res, next) {
     var data = req.body;
-    let question = Employes.create(data);
+    let question = Departements.create(data);
 
     question
         .then(function (resp) {
@@ -47,14 +47,14 @@ EmployesController.create = function (req, res, next) {
         });
 };
 
-EmployesController.updateOne = function (req, res, next) {
+DepartementsController.updateOne = function (req, res, next) {
     console.log(req.body);
     console.log(req.params.id);
     var _query = {};
     var id = req.params.id;
     var data = req.body;
-    _query.where = Employes.where = { id: id };
-    Employes.update(data, _query)
+    _query.where = Departements.where = { id: id };
+    Departements.update(data, _query)
         .then(function (resp) {
             if (!resp || resp == 0) {
                 next({ statusCode: 404, message: "No data Found !" });
@@ -65,13 +65,13 @@ EmployesController.updateOne = function (req, res, next) {
         });
 };
 
-EmployesController.deleteOne = function (req, res, next) {
+DepartementsController.deleteOne = function (req, res, next) {
     var _query = {};
     var id = req.params.id;
 
     _query.where = { id: id };
     // Find match
-    Employes.destroy(_query)
+    Departements.destroy(_query)
         .then(function (resp) {
             if (!resp || resp == 0) {
                 next({ statusCode: 404, message: "No data Found !" });
@@ -82,4 +82,4 @@ EmployesController.deleteOne = function (req, res, next) {
         });
 };
 
-module.exports = EmployesController;
+module.exports = DepartementsController;
