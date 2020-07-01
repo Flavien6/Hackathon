@@ -4,19 +4,26 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class REGION extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      models.REGION.belongsTo(models.SECTEUR, {
+        foreignKey: {
+          name: 'secteur_id',
+          allowNull: false
+        }
+      })
     }
   };
   REGION.init({
-    id: DataTypes.INTEGER,
-    nom: DataTypes.STRING,
-    secteur_id: DataTypes.INTEGER
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    nom: {
+      allowNull: false,
+      type: DataTypes.STRING
+    }
   }, {
     sequelize,
     modelName: 'REGION',

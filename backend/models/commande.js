@@ -4,23 +4,44 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class COMMANDE extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      models.COMMANDE.belongsTo(models.CLIENT, {
+        foreignKey: {
+          name: 'client_id',
+          allowNull: false
+        }
+      })
+      models.COMMANDE.belongsTo(models.EMPLOyield, {
+        foreignKey: {
+          name: 'vendeur_id',
+          allowNull: false
+        }
+      })
     }
   };
   COMMANDE.init({
-    id: DataTypes.INTEGER,
-    date: DataTypes.DATE,
-    mode: DataTypes.STRING,
-    client_id: DataTypes.INTEGER,
-    etat: DataTypes.STRING,
-    total: DataTypes.STRING,
-    vendeur_id: DataTypes.INTEGER
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    date: {
+      allowNull: false,
+      type: DataTypes.DATE
+    },
+    mode: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
+    etat: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
+    total: {
+      allowNull: false,
+      type: DataTypes.REAL
+    }
   }, {
     sequelize,
     modelName: 'COMMANDE',
