@@ -33,7 +33,7 @@
                     },
                     {
                         name: "Visualiser",
-                        url: "/visualisez"
+                        url: "/visualiser"
                     }
                 ]
             }

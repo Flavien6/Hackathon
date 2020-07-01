@@ -2,6 +2,9 @@
   <div class="visu">
     <img alt="Vue logo" src="../assets/logo.png">
     <!--<HelloWorld msg="C'est ma bite"/>-->
+    <div>
+      <router-link to="/visualiser/edit">Editer</router-link>
+    </div>
   </div>
 </template>
 
