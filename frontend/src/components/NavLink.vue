@@ -1,6 +1,6 @@
 <template>
     <!--:class="{active:isActive}"-->
-    <router-link :to="url" active-class="active" class="nav-link">{{ name }}</router-link>
+    <router-link :to="url" active-class="active" class="nav-link" exact>{{ name }}</router-link>
 </template>
 
 <script>

@@ -1,36 +1,18 @@
 <template>
     <div id="nav">
-      <NavLink :url="item.url" :name="item.name" />
-        <!--<nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="sidebar-header">
-                <h3>Menu Principal</h3>
-            </div>
-
-            <script>//on definie la class active en fonction de la valeur de activeCollapse</script>
-            <span @click="slt" :class="{active:activeCollapse}">test</span>
-            <ul class="list-unstyled components">
-                <li class="nav-link">
-                    <router-link to="/" active-class="active">Accueil</router-link>
-                </li>
-                <li class="nav-link">
-                    <router-link to="/visualiser" active-class="active">Visualisation</router-link>
-                </li>
-
-            </ul>
-
-        </nav>
-        <div id="content">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-
-                    <button type="button" id="sidebarCollapse" @click="slt" class="btn btn-info">
-                        <i class="fas fa-align-left"></i>
-                        <span @click="slt">Toggle Sidebar</span>
-                    </button>
-
-                </div>
-            </nav>
-        </div>-->
+      <nav class="navbar navbar-dark bg-light fixed-top">
+        <NavLink  url="/" name="Super ce logo" class="navbar-brand" />
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav">
+            <li class="nav-item" v-for="(item, id) in linkItems" :key="id">
+              <NavLink  :url="item.url" :name="item.name" />
+            </li>
+          </ul>
+        </div>
+      </nav>
     </div>
 </template>
 
@@ -74,18 +56,32 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 #nav {
-  a {
-    font-weight: bold;
+  .navbar {
+    background-color: #2c3e50 !important;
 
-    &:hover, &:focus{
-        color: inherit;
-        text-decoration: none;
-        transition: all 0.3s;
+    button:focus {
+      outline: none;
     }
 
-    &.router-link-exact-active {
-      color: #42b983;
+    a {
+      font-weight: bold;
+
+      &:hover, &:focus{
+          color: inherit;
+          text-decoration: none;
+          transition: all 0.3s;
+      }
+
+      &.router-link-exact-active{
+        color: #42b983 !important;
+      }
+
+      &.nav-link:hover {
+        color: #42b983;
+      }
     }
   }
+
+  margin-bottom: 56px;
 }
 </style>
