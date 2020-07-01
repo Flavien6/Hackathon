@@ -16,64 +16,50 @@
 </template>
 
 <script>
-import NavLink from "./NavLink";
-import { TastyBurgerButton } from "vue-tasty-burgers";
+    import NavLink from "./NavLink";
+    import { TastyBurgerButton } from "vue-tasty-burgers";
 
-export default {
-  name: "Nav",
-  props: {},
-  data() {
-    return {
-      linkItems: [
-        {
-          name: "Accueil",
-          url: "/"
+    export default {
+        name: "Nav",
+        props: {},
+        data() {
+            return {
+                linkItems: [
+                    {
+                        name: "Accueil",
+                        url: "/"
+                    },
+                    {
+                        name: "Visualiser",
+                        url: "/visualiser"
+                    }
+                ],
+                isActive: false
+            };
         },
-        {
-          name: "Visualiser",
-          url: "/visualiser"
+        methods: {
+            openNav() {
+                //console.log(this)
+                this.$el.querySelector("#mySidenav").style.width = "250px";
+                this.$el.querySelector("#burger").style.left = "250px";
+            },
+            closeNav() {
+                this.$el.querySelector("#mySidenav").style.width = "0px";
+                this.$el.querySelector("#burger").style.left = "0";
+            },
+            toggleNav() {
+                if (this.isActive) this.closeNav();
+                else this.openNav();
+                this.isActive = !this.isActive;
+            }
+        },
+        computed: {},
+        mounted() {},
+        components: {
+            NavLink,
+            "tasty-burger-button": TastyBurgerButton
         }
-      ],
-      isActive: false
     };
-  },
-  methods: {
-    /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
-    /*nom: () => {
-
-            }
-
-            nom: function() {
-              
-            }
-
-            nom() {
-
-            }*/
-
-    /* Set the width of the side navigation to 250px and the left margin of the page content to 250px */
-    openNav() {
-      //console.log(this)
-      this.$el.querySelector("#mySidenav").style.width = "250px";
-      this.$el.querySelector("#burger").style.left = "250px";
-    },
-    closeNav() {
-      this.$el.querySelector("#mySidenav").style.width = "0px";
-      this.$el.querySelector("#burger").style.left = "0";
-    },
-    toggleNav() {
-      if (this.isActive) this.closeNav();
-      else this.openNav();
-      this.isActive = !this.isActive;
-    }
-  },
-  computed: {},
-  mounted() {},
-  components: {
-    NavLink,
-    "tasty-burger-button": TastyBurgerButton
-  }
-};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
