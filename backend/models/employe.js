@@ -4,27 +4,53 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class EMPLOYE extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
+      models.EMPLOYE.belongsTo(models.EMPLOI, {
+        foreignKey: {
+          name: 'emploi_id',
+          allowNull: false
+        }
+      })
+      models.EMPLOYE.belongsTo(models.EMPLOYE, {
+        foreignKey: {
+          name: 'manager_id',
+          allowNull: false
+        }
+      })
+      models.EMPLOYE.belongsTo(models.DEPARTEMENT, {
+        foreignKey: {
+          name: 'departement_id',
+          allowNull: false
+        }
+      })
     }
   };
   EMPLOYE.init({
-    id: DataTypes.INTEGER,
-    prenom: DataTypes.STRING,
-    nom: DataTypes.STRING,
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    prenom: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
+    nom: {
+      allowNull: false,
+      type: DataTypes.STRING
+    },
     email: DataTypes.STRING,
-    telephone: DataTypes.INTEGER,
-    date_embauche: DataTypes.DATE,
-    emploi_id: DataTypes.INTEGER,
-    salaire: DataTypes.INTEGER,
-    taux_commission: DataTypes.INTEGER,
-    manager_id: DataTypes.INTEGER,
-    departement_id: DataTypes.INTEGER
+    telephone: DataTypes.STRING,
+    date_embauche: {
+      allowNull: false,
+      type: DataTypes.DATE
+    },
+    salaire: {
+      allowNull: false,
+      type: DataTypes.REAL
+    },
+    taux_commission: DataTypes.REAL,
   }, {
     sequelize,
     modelName: 'EMPLOYE',
