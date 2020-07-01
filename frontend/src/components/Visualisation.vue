@@ -1,8 +1,12 @@
 <template>
-  <div id="tabVisu">
+  <div id="tabVisu" class="container-fluid">
     <nav class="nav nav-tabs">
-      <a class="nav-item nav-link active" href="#p1" data-toggle="tab">Onglet 1</a>
-      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Onglet 2</a>
+      <a class="nav-item nav-link" href="#p1" data-toggle="tab">Localisation</a>
+      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Département</a>
+      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Employé</a>
+      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Client</a>
+      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Produit</a>
+      <a class="nav-item nav-link" href="#p2" data-toggle="tab">Commande</a>
     </nav>
     <div class="tab-content">
       <div class="tab-pane fade" id="p1">Localisation</div>
@@ -15,21 +19,37 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Visualisation",
-  props: {
-    url: String,
-    name: String
-  },
-  data() {
-    return {};
-  },
-  methods: {},
-  computed: {},
-  mounted() {}
-};
+<script>    
+    export default {
+        name: "Visualisation",
+        props: {
+            id: Number,
+            name: String
+        },
+        data() {
+            return {};
+        },
+        methods: {},
+        computed: {},
+        mounted() {}
+    };
 </script>
 
 <style scoped lang="scss">
+$v: #42b942;
+$m: #2c3e50;
+
+nav {
+  border-bottom: 1px solid $v!important;
+
+  a {
+    color: $v;
+    font-weight: bold;
+    border-bottom: none!important;
+  }
+  a.active{
+    color: $v!important;
+    background: $m!important;
+  }
+}
 </style>
