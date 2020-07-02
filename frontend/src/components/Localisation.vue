@@ -20,16 +20,16 @@
                                     <td>
                                         <input type="checkbox" class="checkthis" />
                                     </td>
-                                    <!--<td>{{ values.adresse }}</td>
-                                    <td>{{ value.cp }}</td>
+                                    <td>{{ value.adresse }}</td>
+                                    <td>{{ value.code_postal }}</td>
                                     <td>{{ value.ville }}</td>
                                     <td>{{ value.region }}</td>
-                                    <td>{{ value.secteur }}</td>-->
-                                    <td>{{ value.prenom }}</td>
+                                    <td>{{ value.secteur }}</td>
+                                    <!--<td>{{ value.prenom }}</td>
                                     <td>{{ value.nom }}</td>
                                     <td>{{ value.adresse }}</td>
                                     <td>{{ value.telephone }}</td>
-                                    <td>{{ value.limite_credit }}</td>
+                                    <td>{{ value.limite_credit }}</td>-->
                                 </tr>
                             </tbody>
                         </table>
@@ -64,12 +64,28 @@ table {
         mounted() {
             axios({
                 method: 'get',
-                url: 'http://127.0.0.1:3000/clients'
+                url: 'http://127.0.0.1:3000/localisations'
             })
                 .then(rep => {
                     this.values = rep.data
-                    console.log(this.values.nom)
-                    console.log(rep.data)
+
+                    for(var val in this.values) {
+                        if(this.values[val].region_id) {
+                            axios({
+                                method: 'get',
+                                url: 'http://127.0.0.1:3000/regions/' + this.values[val].region_id
+                            })
+                                .then(rep => {
+                                    this.values[val].region = rep.data.nom
+                                    console.log(this.values)
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                })
+                        }
+                    }
+
+                    console.log(this.values)
                 })
                 .catch(err => {
                     console.log(err)

@@ -1,9 +1,11 @@
 <template>
-  <div class="edit">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <!--<HelloWorld msg="C'est ma bite"/>-->
-    <canvas height="200" width="400"></canvas>
-  </div>
+    <div class="edit">
+        <img alt="Vue logo" src="../assets/logo.png" />
+        <!--<HelloWorld msg="C'est ma bite"/>-->
+        <canvas height="200" width="400"></canvas>
+        <Chat :statusCode="statusCode" :size="400" />
+        <button @click="request">Request</button>
+    </div>
 </template>
 
 <style lang="scss">
@@ -12,11 +14,40 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+    import Chat from '@/components/Chat.vue'
+    import axios from 'axios'
 
     export default {
         name: 'Edit',
         components: {
             // HelloWorld
+            Chat
+        },
+        data() {
+            return {
+                statusCode: 200
+            }
+        },
+        methods: {
+            request() {
+                axios({
+                    method: 'get',
+                    url: 'https://get.geojs.io/v1/ip/country/'
+                })
+                    .then(rep => {
+                        console.log('test')
+                        console.log(rep)
+                        if(rep.status != 200) {
+                            this.statusCode = rep.status
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err.response)
+                        if(err.response)
+                            this.statusCode = err.response.status
+                        console.log(this.statusCode)
+                    })
+            }
         },
         mounted() {
             console.log(this)
