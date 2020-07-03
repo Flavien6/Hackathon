@@ -36,6 +36,8 @@ ClientsController.create = function (req, res, next) {
     var data = req.body;
     let question = Clients.create(data);
 
+    console.log(data)
+
     question
         .then(function (resp) {
             if (!resp) {

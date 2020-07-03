@@ -3,8 +3,6 @@
         <!--<img alt="Vue logo" src="../assets/logo.png" />-->
         <div>
             <Visualisation />
-
-            <router-link to="/visualiser/edit">Editer</router-link>
         </div>
     </div>
 </template>

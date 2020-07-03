@@ -7,9 +7,25 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <style>
-      body {
+      body, html {
         padding: 0;
         margin: 0;
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+        background-color: rgba(44, 62, 80, 0.8);
+      }
+
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #42b983 rgba(44, 62, 80, 0.8);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: #42b983;
+        border-radius: 2px;
       }
     </style>
   </head>
