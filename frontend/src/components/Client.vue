@@ -113,11 +113,13 @@
         },
         methods: {
             reload() {
+                this.$emit('setLoader', true)
                 axios({
                     method: "get",
                     url: "http://127.0.0.1:3000/clients"
                 })
                     .then(rep => {
+                        
                         this.statusCode = rep.status
                         this.values = rep.data;
 
@@ -127,6 +129,7 @@
                                 url: `http://127.0.0.1:3000/employes/${this.values[val].gestionnaire_compte_id}`
                             })
                                 .then(rep => {
+                                    
                                     this.statusCode = rep.status
                                     this.values[val].gestionnaire_compte = `${rep.data.nom} - ${rep.data.prenom}`;
                                     switch (this.values[val].sexe) {
@@ -138,13 +141,19 @@
                                         break;
                                     }
                                     this.$forceUpdate();
+                                    
+                                    this.$emit('setLoader', false)
                                 })
                                 .catch(err => {
+                                    if(this.retry >= 3)
+                                        this.$emit('setLoader', false)
                                     alertToast('Erreur', err, 'error', this)
                                 });
                         }
                     })
                     .catch(err => {
+                        if(this.retry >= 3)
+                            this.$emit('setLoader', false)
                         alertToast('Erreur', err, 'error', this)
                     });
             },

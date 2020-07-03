@@ -11,7 +11,8 @@
 
         <div class="tab-content">
             <div class="tab-pane fade active show">
-                <component :is="currentComp" />
+                <component @setLoader="loaderCtrl" :is="currentComp" />
+                <Loader v-show="load" />
             </div>
         </div>
     </div>
@@ -24,6 +25,7 @@
     import Client from './Client'
     import Produit from './Produit'
     import Commande from './Commande'
+    import Loader from './Loader'
 
     export default {
         name: "Visualisation",
@@ -35,7 +37,8 @@
                 cliKey: 0,
                 proKey: 0,
                 comKey: 0,
-                currentComp: 'Localisation'
+                currentComp: 'Localisation',
+                load: false
             };
         },
         components: {
@@ -44,7 +47,8 @@
             Employe,
             Client,
             Produit,
-            Commande
+            Commande,
+            Loader
         },
         methods: {
             loadComponent(e) {
@@ -67,28 +71,19 @@
             },
             reloadCom : function() {
                 this.comKey++
+            },
+            loaderCtrl(e) {
+                if(!e)
+                    setTimeout(() => {
+                        this.load = e
+                    }, 500);
+                else
+                    this.load = e
             }
         }
     };
 </script>
 
 <style scoped lang="scss">
-$v: #42b983;
-$m: #2c3e50;
 
-#tabVisu {
-    padding-top: 2%;
-    
-    nav {
-        a {
-            color: $v;
-            font-weight: bold;
-            border-bottom: none !important;
-        }
-        a.active {
-            color: $v !important;
-            background: $m !important;
-        }
-    }
-}
 </style>

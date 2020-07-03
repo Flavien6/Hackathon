@@ -178,17 +178,15 @@ let special = {
 }
 
 let options = {
-    options: {
-        responsive: true,
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        },
-        maintainAspectRatio:false
-    }
+    responsive: true,
+    scales: {
+        yAxes: [{
+            ticks: {
+                beginAtZero: true
+            }
+        }]
+    },
+    maintainAspectRatio:false
 }
 
 export default {data, options, special}

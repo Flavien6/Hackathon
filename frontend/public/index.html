@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <link rel="icon" href="<%= BASE_URL %>MakeLogoGreatAgain.png">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <style>
       body, html {
@@ -26,6 +26,27 @@
       ::-webkit-scrollbar-thumb {
         background-color: #42b983;
         border-radius: 2px;
+      }
+
+      button[type="button"].swal2-styled {
+        background: #42b983!important;
+        transition: 0.5s;
+        color: white;
+        font-weight: bold;
+      }
+      
+
+      button[type="button"].swal2-styled:hover{
+        transition: 0.5s;
+        background-color: #2c3e50!important;
+        color: #42b983!important;
+        border-radius: 8px;
+        overflow: visible;
+        transform: scale(1.15);
+      }
+
+      .swal2-modal, .form-control {
+        background-color: #efefef !important;
       }
     </style>
   </head>

@@ -30,11 +30,11 @@
                                 <tr v-for="(value, id) in values" :key="id">
                                     <td>{{ value.nom }}</td>
                                     <td>{{ value.description }}</td>
-                                    <td>{{ value.categorie }}</td>
+                                    <td>{{ value.categorie_id }}</td>
                                     <td>{{ value.poids }}</td>
                                     <td>{{ value.garantie_duree }}</td>
-                                    <td>{{ value.fournisseur }}</td>
-                                    <td>{{ value.produit_etat }}</td>
+                                    <td>{{ value.fournisseur_id }}</td>
+                                    <td>{{ value.etat }}</td>
                                     <td>{{ value.prix_liste }}</td>
                                     <td>{{ value.prix_mini }}</td>
                                     <td>{{ value.url_catalogue }}</td>
@@ -115,6 +115,7 @@
         },
         methods: {
             reload() {
+                this.$emit('setLoader', true)
                 axios({
                     method: "get",
                     url: "http://127.0.0.1:3000/produit_infos"
@@ -123,30 +124,32 @@
                         this.statusCode = rep.status
                         this.values = rep.data;
                         this.$forceUpdate();
+                        this.$emit('setLoader', false)
                     })
                     .catch(err => {
+                        if(this.retry >= 3)
+                            this.$emit('setLoader', false)
                         alertToast('Erreur', err, 'error', this)
                     });
             },
             displayForm(id) {
                 
-                //let produit = {}
+                let produit = {}
                 let t = id === 0? 'Nouveau' : 'Modification d\'un'
 
                 this.$swal({
-                    title: `${t} client`,
+                    title: `${t} produit`,
                     html:
-                        '<form><div class="form-row"><div class="form-group col"><select id="sexe" class="form-control">' +
-                        '<option selected value="M">M.</option><option value="F">Mme.</option></select></div>' +
-                        '<div class="form-group col"><input id="nom" type="text" class="form-control" placeholder="Nom"></div>' +
-                        '<div class="form-group col"><input id="prenom" type="text" class="form-control" placeholder="Prénom"></div></div>' +
-                        `<div class="form-group input-group"><div class="input-group-prepend"><div class="input-group-text">Date de naissance</div></div>`+
-                        `<input id="date_naissance" type="date" class="col form-control"></div>` +
-                        '<div class="form-group"><input id="adresse" type="text" class="form-control" placeholder="Adresse"></div>' +
-                        '<div class="form-row"><div class=" form-group col"><input id="telephone" type="text" class="form-control" placeholder="Téléphone"></div>' +
-                        '<div class="form-group col"><input id="email" type="text" class="form-control" placeholder="Email"></div></div>' +
-                        '<div class="form-row"><div class=" form-group col"><input id="limite_credit" type="text" class="form-control" placeholder="Limite Credit"></div>' +
-                        `<div class="form-group col"><select id="gestionnaire_compte_id" class="form-control"><option selected value="0">Sélection d'un gestionnaire</option></select></div></div></form>`,
+                        '<form><div class="form-group"><input id="nom" type="text" class="form-control" placeholder="Nom"></div>' +
+                        '<div class="form-group"><input id="description" type="text" class="form-control" placeholder="Description"></div>' +
+                        '<div class="form-group"><input id="garantie_duree" type="text" class="form-control" placeholder="Duree de garantie"></div></div>' +
+                        '<div class="form-row"><div class=" form-group col"><input id="categorie_id" type="number" class="form-control" placeholder="Categorie ID"></div>' +
+                        '<div class="form-group col"><input id="poids" type="number" class="form-control" placeholder="Poids"></div>' +
+                        '<div class="form-group col"><input id="fournisseur_id" type="number" class="form-control" placeholder="Fournisseur ID"></div></div>' +
+                        '<div class="form-row"><div class=" form-group col"><input id="etat" type="text" class="form-control" placeholder="Etat"></div>' +
+                        '<div class="form-group col"><input id="prix_liste" type="number" class="form-control" placeholder="Prix liste"></div>' +
+                        '<div class="form-group col"><input id="prix_mini" type="number" class="form-control" placeholder="Prix mini"></div></div>' +
+                        '<div class="form-group"><input id="url_catalogue" type="text" class="form-control" placeholder="URL Catalogue"></div></form>',
                     focusConfirm: false,
                     onRender: () => {
                         if(id != 0) {
@@ -156,69 +159,84 @@
                             })
                                 .then(rep => {
                                     this.statusCode = rep.status                                    
-                                    document.getElementById('sexe').value = rep.data.sexe
                                     document.getElementById('nom').value = rep.data.nom
-                                    document.getElementById('prenom').value = rep.data.prenom
-                                    document.getElementById('date_naissance').value = rep.data.date_naissance
-                                    document.getElementById('adresse').value = rep.data.adresse
-                                    document.getElementById('telephone').value = rep.data.telephone
-                                    document.getElementById('email').value = rep.data.email
-                                    document.getElementById('limite_credit').value = rep.data.limite_credit
-                                    document.getElementById('gestionnaire_compte_id').value = rep.data.gestionnaire_compte_id
+                                    document.getElementById('description').value = rep.data.description
+                                    document.getElementById('categorie_id').value = rep.data.categorie_id
+                                    document.getElementById('poids').value = rep.data.poids
+                                    document.getElementById('garantie_duree').value = rep.data.garantie_duree
+                                    document.getElementById('fournisseur_id').value = rep.data.fournisseur_id
+                                    document.getElementById('etat').value = rep.data.etat
+                                    document.getElementById('prix_liste').value = rep.data.prix_liste
+                                    document.getElementById('prix_mini').value = rep.data.prix_mini
+                                    document.getElementById('url_catalogue').value = rep.data.url_catalogue
                                 })
                                 .catch(err => {
                                     alertToast('Erreur', err, 'error', this)
                                 });
                         }
                     },
-                    preConfirm: () => {/*
+                    preConfirm: () => {
                         let topOk = true
+ 
+                        produit.description = document.getElementById('description').value
 
-                        client.sexe = document.getElementById('sexe').value
+                        if(document.getElementById('poids').value) {
+                            produit.poids = document.getElementById('poids').value
+                        }
+
+                        produit.garantie_duree = document.getElementById('garantie_duree').value
+
+                        if(document.getElementById('prix_mini').value) {
+                            produit.prix_mini = document.getElementById('prix_mini').value
+                        }
+
+                        produit.url_catalogue = document.getElementById('url_catalogue').value
 
                         if (document.getElementById('nom').value) {
-                            client.nom = document.getElementById('nom').value
+                            produit.nom = document.getElementById('nom').value
                         } else {
                             topOk = false
                             this.$swal.showValidationMessage('Nom obligatoire.')
                         }
 
-                        if (document.getElementById('prenom').value) {
-                            client.prenom = document.getElementById('prenom').value
+                        if (document.getElementById('categorie_id').value) {
+                            produit.categorie_id = document.getElementById('categorie_id').value
                         } else {
                             topOk = false
-                            this.$swal.showValidationMessage('Prenom obligatoire.')
+                            this.$swal.showValidationMessage('Catégorie ID obligatoire.')
                         }
 
-                        if(document.getElementById('date_naissance').value) {
-                            client.date_naissance = document.getElementById('date_naissance').value
-                        }
-
-                        client.adresse = document.getElementById('adresse').value
-                        client.telephone = document.getElementById('telephone').value
-                        client.email = document.getElementById('email').value
-
-                        if(document.getElementById('limite_credit').value) {
-                            client.limite_credit = document.getElementById('limite_credit').value
-                        }
-
-                        if (document.getElementById('gestionnaire_compte_id').value != 0) {
-                            client.gestionnaire_compte_id = document.getElementById('gestionnaire_compte_id').value
+                        if (document.getElementById('fournisseur_id').value) {
+                            produit.fournisseur_id = document.getElementById('fournisseur_id').value
                         } else {
                             topOk = false
-                            this.$swal.showValidationMessage('Gestionnaire obligatoire.')
+                            this.$swal.showValidationMessage('Fournisseur ID obligatoire.')
+                        }
+
+                        if (document.getElementById('etat').value) {
+                            produit.etat = document.getElementById('etat').value
+                        } else {
+                            topOk = false
+                            this.$swal.showValidationMessage('Etat obligatoire.')
+                        }
+
+                        if (document.getElementById('prix_liste').value) {
+                            produit.prix_liste = document.getElementById('prix_liste').value
+                        } else {
+                            topOk = false
+                            this.$swal.showValidationMessage('Prix Liste obligatoire.')
                         }
 
                         if(topOk) {
-                            console.log(client);
                             
                             if(id != 0) {
                                 axios({
                                     method: "put",
-                                    url: `http://127.0.0.1:3000/clients/${id}`,
-                                    data: client
+                                    url: `http://127.0.0.1:3000/produit_infos/${id}`,
+                                    data: produit
                                 })
-                                    .then(() => {
+                                    .then(rep => {
+                                        this.statusCode = rep.status
                                         alertToast('Mise à jour réussie', {message: ''}, 'success', this)
                                     })
                                     .catch(err => {
@@ -228,17 +246,18 @@
                             else {
                                 axios({
                                     method: "post",
-                                    url: `http://127.0.0.1:3000/clients`,
-                                    data: client
+                                    url: `http://127.0.0.1:3000/produit_infos`,
+                                    data: produit
                                 })
-                                    .then(() => {
+                                    .then(rep => {
+                                        this.statusCode = rep.status
                                         alertToast('Ajout réussi', {message: ''}, 'success', this)
                                     })
                                     .catch(err => {
                                         alertToast('Erreur', err, 'error', this)
                                     });
                             }
-                        }*/
+                        }
                     }
                 })
             },

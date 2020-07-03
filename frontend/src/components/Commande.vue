@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <button type="button" class="btn">
+                    <button type="button" @click="displayForm(0)" class="btn">
                         Ajouter <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
                             <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
@@ -24,14 +24,14 @@
                             </thead>
                             <tbody>
                                 <tr v-for="(value, id) in values" :key="id">
-                                    <td>{{ value.commande_date }}</td>
-                                    <td>{{ value.commande_mode }}</td>
+                                    <td>{{ value.date }}</td>
+                                    <td>{{ value.mode }}</td>
                                     <td>{{ value.client }}</td>
-                                    <td>{{ value.commande_etat }}</td>
-                                    <td>{{ value.commande_total }}</td>
+                                    <td>{{ value.etat }}</td>
+                                    <td>{{ value.total }}</td>
                                     <td>{{ value.vendeur }}</td>
                                     <td>
-                                        <div class="modif" @click="editRow">
+                                        <div class="modif" @click="editRow(value.id)">
                                             <svg
                                                 width="1em"
                                                 height="1em"
@@ -51,7 +51,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="suppr" @click="deleteRow">
+                                        <div class="suppr" @click="deleteRow(value.id)">
                                             <svg
                                                 class="bi bi-trash"
                                                 width="1em"
@@ -103,11 +103,11 @@
             Chat
         },
         mounted() {
-            //retry = 0
             this.reload()
         },
         methods: {
             reload() {
+                this.$emit('setLoader', true)
                 axios({
                     method: "get",
                     url: "http://127.0.0.1:3000/commandes"
@@ -118,156 +118,172 @@
                         for (let val in this.values) {
                             axios({
                                 method: "get",
-                                url: `http://127.0.0.1:3000/commandes/${this.values[val].gestionnaire_compte_id}`
+                                url: `http://127.0.0.1:3000/employes/${this.values[val].vendeur_id}`
                             })
                                 .then(rep => {
                                     this.statusCode = rep.status
-                                    this.values[val].gestionnaire_compte = `${rep.data.nom} - ${rep.data.prenom}`;
-                                    switch (this.values[val].sexe) {
-                                    case 'M':
-                                        this.values[val].des = 'M.'
-                                        break;
-                                    default:
-                                        this.values[val].des = 'Mme.'
-                                        break;
-                                    }
-                                    this.$forceUpdate();
+                                    this.values[val].vendeur = `${rep.data.nom} - ${rep.data.prenom}`
+
+                                    axios({
+                                        method: "get",
+                                        url: `http://127.0.0.1:3000/clients/${this.values[val].client_id}`
+                                    })
+                                        .then(rep => {
+                                            this.statusCode = rep.status
+                                            this.values[val].client = `${rep.data.nom} - ${rep.data.prenom}`
+                                            this.$emit('setLoader', false)
+                                            this.$forceUpdate()
+                                        })
+                                        .catch(err => {
+                                            if(this.retry >= 3)
+                                                this.$emit('setLoader', false)
+                                            alertToast('Erreur', err, 'error', this)
+                                        });
                                 })
                                 .catch(err => {
+                                    if(this.retry >= 3)
+                                        this.$emit('setLoader', false)
                                     alertToast('Erreur', err, 'error', this)
                                 });
                         }
                     })
                     .catch(err => {
+                        if(this.retry >= 3)
+                            this.$emit('setLoader', false)
                         alertToast('Erreur', err, 'error', this)
                     });
             },
             displayForm(id) {
                 
-                let client = {}
-                let t = id === 0? 'Nouveau' : 'Modification d\'un'
+                let commande = {}
+                let t = id === 0? 'Nouvelle' : 'Modification d\'une'
                 let optionEmp
+                let optionCli
 
                 axios({
                     method: "get",
                     url: `http://127.0.0.1:3000/employes`
                 })
                     .then(rep => {
+                        this.statusCode = rep.status
                         rep.data.forEach(e => {
                             optionEmp += `<option value="${e.id}">${e.nom} - ${e.prenom}</option>`
                         })
 
-                        this.statusCode = rep.status
-                        this.$swal({
-                            title: `${t} client`,
-                            html:
-                                '<form><div class="form-row"><div class="form-group col"><select id="sexe" class="form-control">' +
-                                '<option selected value="M">M.</option><option value="F">Mme.</option></select></div>' +
-                                '<div class="form-group col"><input id="nom" type="text" class="form-control" placeholder="Nom"></div>' +
-                                '<div class="form-group col"><input id="prenom" type="text" class="form-control" placeholder="Prénom"></div></div>' +
-                                `<div class="form-group input-group"><div class="input-group-prepend"><div class="input-group-text">Date de naissance</div></div>`+
-                                `<input id="date_naissance" type="date" class="col form-control"></div>` +
-                                '<div class="form-group"><input id="adresse" type="text" class="form-control" placeholder="Adresse"></div>' +
-                                '<div class="form-row"><div class=" form-group col"><input id="telephone" type="text" class="form-control" placeholder="Téléphone"></div>' +
-                                '<div class="form-group col"><input id="email" type="text" class="form-control" placeholder="Email"></div></div>' +
-                                '<div class="form-row"><div class=" form-group col"><input id="limite_credit" type="text" class="form-control" placeholder="Limite Credit"></div>' +
-                                `<div class="form-group col"><select id="gestionnaire_compte_id" class="form-control"><option selected value="0">Sélection d'un gestionnaire</option>${optionEmp}</select></div></div></form>`,
-                            focusConfirm: false,
-                            onRender: () => {
-                                if(id != 0) {
-                                    axios({
-                                        method: "get",
-                                        url: `http://127.0.0.1:3000/clients/${id}`
-                                    })
-                                        .then(rep => {
-                                            console.log(rep.data)
-                                            console.log(client);
-                                            
-                                            document.getElementById('sexe').value = rep.data.sexe
-                                            document.getElementById('nom').value = rep.data.nom
-                                            document.getElementById('prenom').value = rep.data.prenom
-                                            document.getElementById('date_naissance').value = rep.data.date_naissance
-                                            document.getElementById('adresse').value = rep.data.adresse
-                                            document.getElementById('telephone').value = rep.data.telephone
-                                            document.getElementById('email').value = rep.data.email
-                                            document.getElementById('limite_credit').value = rep.data.limite_credit
-                                            document.getElementById('gestionnaire_compte_id').value = rep.data.gestionnaire_compte_id
-                                        })
-                                        .catch(err => {
-                                            alertToast('Erreur', err, 'error', this)
-                                        });
-                                }
-                            },
-                            preConfirm: () => {
-                                let topOk = true
-
-                                client.sexe = document.getElementById('sexe').value
-
-                                if (document.getElementById('nom').value) {
-                                    client.nom = document.getElementById('nom').value
-                                } else {
-                                    topOk = false
-                                    this.$swal.showValidationMessage('Nom obligatoire.')
-                                }
-
-                                if (document.getElementById('prenom').value) {
-                                    client.prenom = document.getElementById('prenom').value
-                                } else {
-                                    topOk = false
-                                    this.$swal.showValidationMessage('Prenom obligatoire.')
-                                }
-
-                                if(document.getElementById('date_naissance').value) {
-                                    client.date_naissance = document.getElementById('date_naissance').value
-                                }
-
-                                client.adresse = document.getElementById('adresse').value
-                                client.telephone = document.getElementById('telephone').value
-                                client.email = document.getElementById('email').value
-
-                                if(document.getElementById('limite_credit').value) {
-                                    client.limite_credit = document.getElementById('limite_credit').value
-                                }
-
-                                if (document.getElementById('gestionnaire_compte_id').value != 0) {
-                                    client.gestionnaire_compte_id = document.getElementById('gestionnaire_compte_id').value
-                                } else {
-                                    topOk = false
-                                    this.$swal.showValidationMessage('Gestionnaire obligatoire.')
-                                }
-
-                                if(topOk) {
-                                    console.log(client);
-                                    
-                                    if(id != 0) {
-                                        axios({
-                                            method: "put",
-                                            url: `http://127.0.0.1:3000/clients/${id}`,
-                                            data: client
-                                        })
-                                            .then(() => {
-                                                alertToast('Mise à jour réussie', {message: ''}, 'success', this)
-                                            })
-                                            .catch(err => {
-                                                alertToast('Erreur', err, 'error', this)
-                                            });
-                                    }
-                                    else {
-                                        axios({
-                                            method: "post",
-                                            url: `http://127.0.0.1:3000/clients`,
-                                            data: client
-                                        })
-                                            .then(() => {
-                                                alertToast('Ajout réussi', {message: ''}, 'success', this)
-                                            })
-                                            .catch(err => {
-                                                alertToast('Erreur', err, 'error', this)
-                                            });
-                                    }
-                                }
-                            }
+                        axios({
+                            method: "get",
+                            url: `http://127.0.0.1:3000/clients`
                         })
+                            .then(rep => {
+                                this.statusCode = rep.status
+                                rep.data.forEach(e => {
+                                    optionCli += `<option value="${e.id}">${e.nom} - ${e.prenom}</option>`
+                                })
+                                
+                                this.$swal({
+                                    title: `${t} commande`,
+                                    html:
+                                        `<form><div class="form-group input-group"><div class="input-group-prepend"><div class="input-group-text">Date</div></div>`+
+                                        `<input id="date" type="date" class="col form-control"></div>` +
+                                        '<div class="form-row"><div class=" form-group col"><input id="mode" type="text" class="form-control" placeholder="Mode"></div>' +
+                                        '<div class="form-group col"><input id="etat" type="text" class="form-control" placeholder="Etat commande"></div>' +
+                                        '<div class="form-group col"><input id="total" type="number" class="form-control" placeholder="Total commande"></div></div>' +
+                                        `<div class="form-row"><div class=" form-group col"><select id="vendeur_id" class="form-control"><option selected value="0">Sélection d'un vendeur</option>${optionEmp}</select></div>` +
+                                        `<div class="form-group col"><select id="client_id" class="form-control"><option selected value="0">Sélection d'un client</option>${optionCli}</select></div></div></form>`,
+                                    focusConfirm: false,
+                                    onRender: () => {
+                                        if(id != 0) {
+                                            axios({
+                                                method: "get",
+                                                url: `http://127.0.0.1:3000/commandes/${id}`
+                                            })
+                                                .then(rep => {
+                                                    this.statusCode = rep.status
+                                                    document.getElementById('date').value = rep.data.date
+                                                    document.getElementById('mode').value = rep.data.mode
+                                                    document.getElementById('etat').value = rep.data.etat
+                                                    document.getElementById('total').value = rep.data.total
+                                                    document.getElementById('client_id').value = rep.data.client_id
+                                                    document.getElementById('vendeur_id').value = rep.data.vendeur_id
+                                                })
+                                                .catch(err => {
+                                                    alertToast('Erreur', err, 'error', this)
+                                                });
+                                        }
+                                    },
+                                    preConfirm: () => {
+                                        let topOk = true
+
+                                        commande.date = document.getElementById('date').value
+                                        commande.mode = document.getElementById('mode').value
+                                        commande.etat = document.getElementById('etat').value
+                                        commande.total = document.getElementById('total').value
+                                        commande.client_id = document.getElementById('client_id').value
+                                        commande.vendeur_id = document.getElementById('vendeur_id').value
+
+                                        if(commande.date == "") {
+                                            topOk = false
+                                            this.$swal.showValidationMessage('Date obligatoire.')
+                                        }
+                                        if(commande.mode == "") {
+                                            topOk = false
+                                            this.$swal.showValidationMessage('Mode obligatoire.')
+                                        }
+                                        if(commande.etat == "") {
+                                            topOk = false
+                                            this.$swal.showValidationMessage('Etat obligatoire.')
+                                        }
+                                        if(commande.total == "") {
+                                            topOk = false
+                                            this.$swal.showValidationMessage('Total obligatoire.')
+                                        }
+                                        if(commande.client_id == 0) {
+                                            topOk = false
+                                            this.$swal.showValidationMessage('Client obligatoire.')
+                                        }
+                                        if(commande.vendeur_id == 0) {
+                                            topOk = false
+                                            this.$swal.showValidationMessage('Vendeur obligatoire.')
+                                        }
+
+                                        if(topOk) {
+                                            
+                                            if(id != 0) {
+                                                axios({
+                                                    method: "put",
+                                                    url: `http://127.0.0.1:3000/commandes/${id}`,
+                                                    data: commande
+                                                })
+                                                    .then(rep => {
+                                                        this.statusCode = rep.status
+                                                        alertToast('Mise à jour réussie', {message: ''}, 'success', this)
+                                                    })
+                                                    .catch(err => {
+                                                        alertToast('Erreur', err, 'error', this)
+                                                    });
+                                            }
+                                            else {
+                                                axios({
+                                                    method: "post",
+                                                    url: `http://127.0.0.1:3000/commandes`,
+                                                    data: commande
+                                                })
+                                                    .then(rep => {
+                                                        this.statusCode = rep.status
+                                                        alertToast('Ajout réussi', {message: ''}, 'success', this)
+                                                    })
+                                                    .catch(err => {
+                                                        alertToast('Erreur', err, 'error', this)
+                                                    });
+                                            }
+                                        }
+                                    }
+                                })
+                            })
+                            .catch(err => {
+                                alertToast('Erreur', err, 'error', this)
+                            })
+
                     })
                     .catch(err => {
                         alertToast('Erreur', err, 'error', this)
@@ -276,9 +292,10 @@
             deleteRow(id) {
                 axios({
                     method: "delete",
-                    url: `http://127.0.0.1:3000/clients/${id}`
+                    url: `http://127.0.0.1:3000/commandes/${id}`
                 })
-                    .then(() => {
+                    .then(rep => {
+                        this.statusCode = rep.status
                         alertToast('Elément supprimé.', {message: ''}, 'success', this)
                     })
                     .catch(err => {

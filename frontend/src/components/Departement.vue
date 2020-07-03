@@ -101,6 +101,7 @@
         },
         methods: {
             reload() {
+                this.$emit('setLoader', true)
                 axios({
                     method: "get",
                     url: "http://127.0.0.1:3000/departements"
@@ -117,14 +118,19 @@
                                 .then(rep => {
                                     this.statusCode = rep.status
                                     this.values[val].adresse = rep.data.adresse;
+                                    this.$emit('setLoader', false)
                                     this.$forceUpdate();
                                 })
                                 .catch(err => {
+                                    if(this.retry >= 3)
+                                        this.$emit('setLoader', false)
                                     alertToast('Erreur', err, 'error', this)
                                 });
                         }
                     })
                     .catch(err => {
+                        if(this.retry >= 3)
+                            this.$emit('setLoader', false)
                         alertToast('Erreur', err, 'error', this)
                     });
             },

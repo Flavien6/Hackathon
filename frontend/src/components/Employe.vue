@@ -115,6 +115,7 @@
         },
         methods: {
             reload() {
+                this.$emit('setLoader', true)
                 axios({
                     method: "get",
                     url: "http://127.0.0.1:3000/employes"
@@ -147,8 +148,11 @@
                                                         this.statusCode = rep.status
                                                         this.values[val].manager = `${rep.data.nom} - ${rep.data.prenom}`;
                                                         this.$forceUpdate();
+                                                        this.$emit('setLoader', false)
                                                     })
                                                     .catch(err => {
+                                                        if(this.retry >= 3)
+                                                            this.$emit('setLoader', false)
                                                         alertToast('Erreur', err, 'error', this)
                                                     });
                                             }
@@ -156,15 +160,21 @@
                                             this.$forceUpdate();
                                         })
                                         .catch(err => {
+                                            if(this.retry >= 3)
+                                                this.$emit('setLoader', false)
                                             alertToast('Erreur', err, 'error', this)
                                         });
                                 })
                                 .catch(err => {
+                                    if(this.retry >= 3)
+                                        this.$emit('setLoader', false)
                                     alertToast('Erreur', err, 'error', this)
                                 });
                         }
                     })
                     .catch(err => {
+                        if(this.retry >= 3)
+                            this.$emit('setLoader', false)
                         alertToast('Erreur', err, 'error', this)
                     });
             },
